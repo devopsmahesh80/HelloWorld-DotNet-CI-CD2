@@ -1,0 +1,29 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Apply Kubernetes manifests
+      kubernetes.core.k8s:
+        kubeconfig: ~/.kube/config
+        state: present
+        src: "{{ item }}"
+      loop:
+        - deployment.yaml
+        - service.yaml
+
+    - name: Wait for pods to be running
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: default
+        label_selectors:
+          - "app=web-app"
+      register: pods
+      until: pods.resources | length > 0 and pods.resources | map(attribute='status.phase') | list | first == 'Running'
+      retries: 10
+      delay: 6
+
+    - name: Run smoke test in cluster
+      shell: |
+        kubectl run smoke --rm -i \
+          --restart=Never --image=appropriate/curl -- \
+          curl -sSf http://web-app:80/health
+

@@ -1,0 +1,17 @@
+{
+  "name": "my-web-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "smoke": "node smoke.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}
